@@ -4,11 +4,9 @@ Train a custom tokenizer optimized for historical English (1500-1850)
 Replaces the basic tokenizer with a historical-specific one
 """
 
-import os
 import json
 import sys
 from pathlib import Path
-from typing import List, Dict, Any
 import logging
 
 # Add project root to path
@@ -19,7 +17,7 @@ from config import config
 
 try:
     from tokenizers import Tokenizer, models, pre_tokenizers, trainers, processors
-    from tokenizers.normalizers import NFD, Lowercase, StripAccents, Sequence
+    from tokenizers.normalizers import NFD, StripAccents, Sequence
     from transformers import PreTrainedTokenizerFast
     import tqdm
 except ImportError as e:
@@ -137,13 +135,6 @@ class HistoricalTokenizerTrainer:
                 ("<|endoftext|>", 0),
             ]
         )
-        
-        # Add normalizer to fix spacing around punctuation
-        tokenizer.normalizer = Sequence([
-            NFD(),           # Unicode normalization
-            StripAccents(),  # Remove accents
-            # Add custom normalizer to fix spacing
-        ])
         
         # Save tokenizer
         tokenizer.save(str(self.output_dir / "tokenizer.json"))
